@@ -152,7 +152,7 @@ def main():
             cal = bl.active(bl.calibrate(block, base), base)
             vec = physics_features(cal, n / args.window)
 
-            resp = model.responsibilities_for(vec)
+            resp = model.project_features(vec)
             reported, guess, prob, lo, hi, ev = model.decide(resp, model.effective_prev(prev))
             pred_label = ACTIONS[reported] if reported is not None else "UNCERTAIN"
 

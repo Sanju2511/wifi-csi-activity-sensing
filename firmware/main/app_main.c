@@ -224,7 +224,7 @@ static void wifi_csi_rx_cb(void *ctx, wifi_csi_info_t *info)
         ets_printf("type,id,mac,rssi,rate,sig_mode,mcs,bandwidth,smoothing,"
                    "not_sounding,aggregation,stbc,fec_coding,sgi,noise_floor,"
                    "ampdu_cnt,channel,secondary_channel,local_timestamp,ant,"
-                   "sig_len,rx_format,len,first_word,data\n");
+                   "sig_len,len,first_word,data\n");
     }
     /* metadata prefix: channel at column 16, local timestamp at column 18 */
     ets_printf("CSI_DATA,%d," MACSTR ",%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d",
@@ -232,7 +232,7 @@ static void wifi_csi_rx_cb(void *ctx, wifi_csi_info_t *info)
                rx->mcs, rx->cwb, rx->smoothing, rx->not_sounding,
                rx->aggregation, rx->stbc, rx->fec_coding, rx->sgi,
                rx->noise_floor, rx->ampdu_cnt, rx->channel, rx->secondary_channel,
-               rx->timestamp, rx->ant, rx->sig_len, rx->sig_mode);
+               rx->timestamp, rx->ant, rx->sig_len);
 
     ets_printf(",%d,%d,\"[%d", info->len, info->first_word_invalid, info->buf[0]);
     for (int i = 1; i < info->len; i++) {

@@ -35,8 +35,8 @@ def main():
     ap.add_argument("--stride-seconds", type=float, default=None,
                     help="hop between windows (default: half the window)")
     ap.add_argument("--window-packets", type=int, default=None,
-                    help="CONTROL: use the legacy fixed-packet-count windows "
-                         "instead of fixed duration, for comparison only")
+                    help="use fixed packet-count windows instead of fixed duration "
+                         "(for comparison only)")
     ap.add_argument("--crop", type=int, default=CROP_PACKETS,
                     help="packets discarded from each end (walk-in / walk-out). "
                          "Default 3300 assumes ~110 packets/s. At a lower passive "
@@ -69,7 +69,7 @@ def main():
 
     print()
     print("=" * 74)
-    win = (f"{args.window_packets} packets/window — LEGACY CONTROL"
+    win = (f"{args.window_packets} packets/window (comparison mode)"
            if args.window_packets else f"{args.window_seconds:g}s windows")
     print(f"2 · FEATURES   ({args.mode}, {win}, background subtraction "
           f"{'ON' if sub else 'OFF — A/B control'})")

@@ -204,7 +204,7 @@ def main():
         if packets == 0:
             say("  !!! ZERO CSI PACKETS — stop and check the ESP32 before continuing.")
         elif packets < minutes * 60 * 50:
-            say("  !!! Packet rate looks low. Expected roughly 110 per second.")
+            say("  !!! Packet rate looks low. Expected roughly 100 per second.")
         if use_camera and frames == 0:
             say("  !!! ZERO VIDEO FRAMES — check camera permission.")
         manifest["stages"].append({"label": name, "minutes": minutes,

@@ -96,7 +96,7 @@ def main():
     ap.add_argument("--duration", type=float, default=None,
                     help="stop after this many seconds (default: run until Ctrl-C)")
     ap.add_argument("--show-all", action="store_true",
-                    help="also print the interval and evidence for every window")
+                    help="print every window, not only when the answer changes")
     args = ap.parse_args()
 
     if args.model:
@@ -123,24 +123,19 @@ def main():
     print(BAR)
     print("LIVE PREDICTION")
     print(BAR)
-    is_rf = bundle.get("model_type") == "rf" or (hasattr(model, "predict_proba") and not hasattr(model, "decide"))
-    m_type_name = "Random Forest" if is_rf else "Bayesian RL"
-    print(f"  model type: {m_type_name} ({model_path.name})")
+    print(f"  model     : {model_path.name}")
     print(f"  baseline  : {base_path.name}")
     print(f"  window    : {args.window:g} s, stride {args.stride:g} s")
-    print(f"  actions   : {', '.join(ACTIONS)}" + ("" if is_rf else "  (+ UNCERTAIN)"))
-    if not is_rf:
-        if not use_gate:
-            print(f"  OOD gate  : off (enable with --gate)")
-        else:
-            print(f"  OOD gate  : on (floor = {getattr(model, 'll_floor', float('nan')):.1f})")
+    print(f"  actions   : {', '.join(ACTIONS)}  (+ UNCERTAIN)")
+    if not use_gate:
+        print(f"  OOD gate  : off (enable with --gate)")
+    else:
+        print(f"  OOD gate  : on (floor = {model.ll_floor:.1f})")
     if "stats" in bundle and bundle["stats"]:
         s = bundle["stats"]
         if isinstance(s, dict):
-            if "acc_allin" in s:
-                print(f"  held-out  : {s['acc_allin']:.3f} abstain-as-wrong")
-            elif "acc" in s:
-                print(f"  held-out  : {s['acc']:.3f} accuracy")
+            if "all_in" in s:
+                print(f"  held-out  : {s['all_in']:.3f} (abstain counted as wrong)")
     print()
     print("  The baseline is only valid while the geometry has not changed.")
     print("  Ctrl-C to stop.")
@@ -213,28 +208,19 @@ def main():
             fs = n / args.window          # fixed duration -> constant bin spacing
             vec = physics_features(cal, fs)
 
-            if is_rf:
-                probs = model.predict_proba([vec])[0]
-                classes = list(model.classes_)
-                top_idx = int(np.argmax(probs))
-                label = classes[top_idx]
-                prob = float(probs[top_idx])
-                line = f"  {now-t_first:7.1f}s  {rate:6.1f}/s  {label:<12s}  {prob:6.3f}"
-            else:
-                resp = model.responsibilities_for(vec)
-                reported, guess, prob, lo, hi, evidence = model.decide(
-                    resp, model.effective_prev(prev))
-                prev = guess                  # the chain advances on the guess, not the report
+            z = model.project_features(vec)
+            reported, guess, prob, lo, hi, evidence = model.decide(z, model.effective_prev(prev))
+            prev = guess                  # the previous-action slot follows the best guess
 
-                ll, plausible = model.plausibility(vec)
-                if use_gate and not plausible:
-                    reported = None
-                    n_odd += 1
+            ll, plausible = model.plausibility(vec)
+            if use_gate and not plausible:
+                reported = None
+                n_odd += 1
 
-                label = ACTIONS[reported] if reported is not None else "UNCERTAIN"
-                if use_gate and not plausible:
-                    label = "OUT-OF-ROOM"
-                line = f"  {now-t_first:7.1f}s  {rate:6.1f}/s  {label:<12s}  {prob:6.3f}"
+            label = ACTIONS[reported] if reported is not None else "UNCERTAIN"
+            if use_gate and not plausible:
+                label = "OUT-OF-ROOM"
+            line = f"  {now-t_first:7.1f}s  {rate:6.1f}/s  {label:<12s}  {prob:6.3f}"
             if args.show_all or line[:35] != last_line[:35]:
                 print(line)
             last_line = line

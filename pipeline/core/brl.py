@@ -22,7 +22,7 @@ N_PREV_SLOTS = N_ACTIONS + 1
 class ContinuousBayesianRL:
     def __init__(self, n_pca=12, seed=42, n_passes=40,
                  ci=0.90, min_evidence=1.0, lambda_reg=1.0,
-                 memory=True, temp=4.0, **kwargs):
+                 memory=True, temp=4.0):
         self.n_pca = n_pca
         self.seed = seed
         self.n_passes = n_passes
@@ -225,17 +225,9 @@ class ContinuousBayesianRL:
     def effective_prev(self, prev):
         return prev if self.memory else START_TOKEN
 
-    def responsibilities_for(self, feature_vector):
+    def project_features(self, feature_vector):
         """Project a raw feature vector to PCA space."""
         return self._project(np.asarray(feature_vector, dtype=float).reshape(1, -1))[0]
-
-    def evidence_per_state(self):
-        """Total evidence collected by each action."""
-        return np.array([np.trace(A) for A in self.A_mat])
-
-
-# older name, still used by train.py
-HierarchicalBayesianRL = ContinuousBayesianRL
 
 
 def calibration(probs, correct, n_bins=10):

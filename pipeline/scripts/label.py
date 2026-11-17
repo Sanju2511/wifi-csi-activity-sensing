@@ -84,7 +84,7 @@ def main():
     ap.add_argument("--frames", type=int, default=FRAMES_PER_WINDOW)
     ap.add_argument("--out", default=None)
     ap.add_argument("--max-windows", type=int, default=None,
-                    help="check only the first N windows per label (smoke test)")
+                    help="check only the first N windows per label (quick test)")
     args = ap.parse_args()
 
     if args.session:

@@ -15,7 +15,7 @@ import numpy as np
 import pandas as pd
 
 from core import ARTIFACTS
-from core.brl import ACTIONS, HierarchicalBayesianRL, calibration
+from core.brl import ACTIONS, ContinuousBayesianRL, calibration
 from core.features import META_COLS, block_split, room_split
 
 
@@ -63,8 +63,6 @@ def report(model, te, feature_cols, title):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--features", default=None)
-    ap.add_argument("--components", type=int, default=48,
-                    help="unused by the current agent; retained for compatibility")
     ap.add_argument("--pca", type=int, default=12, help="0 disables the projection")
     ap.add_argument("--passes", type=int, default=40)
     ap.add_argument("--no-memory", action="store_true",
@@ -100,7 +98,7 @@ def main():
           f"{args.passes} passes")
     print()
 
-    model = HierarchicalBayesianRL(memory=not args.no_memory, n_components=args.components,
+    model = ContinuousBayesianRL(memory=not args.no_memory,
                                    n_pca=args.pca or None,
                                    n_passes=args.passes)
     model.fit(tr, feature_cols)
