@@ -1,0 +1,14 @@
+# Required for CSI capture - without these, esp_wifi_set_csi_config() aborts
+# and the board reboot-loops. Matches the csi_ap_iperf project.
+CONFIG_ESP_WIFI_CSI_ENABLED=y
+CONFIG_ESP32_WIFI_CSI_ENABLED=y
+
+# No power save - never batch frames, keep the 100 pkt/s timing clean
+CONFIG_ESP_WIFI_PS_NONE=y
+
+# Fast console: full CSI at 100 rows/sec overflows 115200 baud and garbles
+# the output. 921600 matches the csi_ap_iperf host scripts (hop_analyze.py).
+# The baud is only honored when UART_CUSTOM is selected (else it locks 115200).
+CONFIG_ESP_CONSOLE_UART_CUSTOM=y
+CONFIG_ESP_CONSOLE_UART_BAUDRATE=921600
+CONFIG_ESPTOOLPY_MONITOR_BAUD=921600

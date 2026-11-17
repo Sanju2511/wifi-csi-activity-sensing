@@ -1,0 +1,42 @@
+{
+  "architecture": "esp32_espnow_pair_serial",
+  "session_id": "BASELINE_20261116_203503",
+  "label": "BASELINE",
+  "duration_sec": 120.533,
+  "csi_packets": 11170,
+  "csi_rate_host_span_hz": 93.084,
+  "csi_rate_esp_span_hz": 93.086,
+  "bucket_sec": 5.0,
+  "bucket_rates_hz": [
+    91.8,
+    93.6,
+    91.4,
+    94.2,
+    92.0,
+    96.6,
+    91.6,
+    93.8,
+    93.4,
+    96.8,
+    91.2,
+    92.0,
+    91.8,
+    95.4,
+    91.6,
+    95.8,
+    91.2,
+    92.6,
+    90.6,
+    95.6,
+    91.4,
+    93.8,
+    91.4,
+    94.4
+  ],
+  "bytes_total": 5369403,
+  "target_packets": null,
+  "hit_target_packets": null,
+  "files": {
+    "csi": "data/raw/hostel_hop_20261116_203445/csi/BASELINE_20261116_203503.csi.csv"
+  }
+}
